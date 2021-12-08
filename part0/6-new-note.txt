@@ -1,0 +1,17 @@
+note over browser:
+browser passes input data
+to server
+end note
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+note over server:
+server responses with created
+status and json
+end note
+server-->browser: HTTP 201 {"message":"note created"}
+note over browser:
+browser rerenders newly created
+note without making new request
+end note
+note over server:
+server saves the new note to database
+end note
