@@ -7,17 +7,17 @@ const Statistics = ({ feedback }) => {
     let nonZeroSum = all === 0 ? 1 : all;
     let positive = good / nonZeroSum;
     return (
-      <>
-        <Result text={"good"} total={good} />
-        <Result text={"neutral"} total={neutral} />
-        <Result text={"bad"} total={bad} />
-        <Result text={"all"} total={all} />
-        <Result
-          text={"all"}
-          total={(good * 1 + neutral * 0 + bad * -1) / nonZeroSum}
+      <div>
+        <StatisticLine text="good" value={good} />
+        <StatisticLine text="neutral" value={neutral} />
+        <StatisticLine text="bad" value={bad} />
+        <StatisticLine text="all" value={all} />
+        <StatisticLine
+          text="average"
+          value={(good * 1 + neutral * 0 + bad * -1) / nonZeroSum}
         />
-        <Result text={"positive"} total={positive} />
-      </>
+        <StatisticLine text="positive" value={positive} />
+      </div>
     );
   } else {
     return <div>No feedback given</div>;
@@ -28,10 +28,10 @@ const Button = ({ clickHandler, text }) => {
   return <button onClick={clickHandler}>{text}</button>;
 };
 
-const Result = ({ text, total }) => {
+const StatisticLine = ({ text, value }) => {
   return (
     <div>
-      {text} {total}
+      {text} {value}
       {text === "positive" ? "%" : ""}
     </div>
   );
