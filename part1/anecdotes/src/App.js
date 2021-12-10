@@ -21,18 +21,23 @@ const App = () => {
   };
 
   const increment = () => {
-    const copy = [...allPoints]
-    copy[selected] += 1
-    setAllPoints(copy)
-    console.log(copy)
-  }
+    const copy = [...allPoints];
+    copy[selected] += 1;
+    setAllPoints(copy);
+    console.log(copy);
+  };
 
   return (
     <>
+      <h1>Anecdote of the day</h1>
       <div>{anecdotes[selected]}</div>
       <div>has {allPoints[selected]} votes</div>
       <button onClick={increment}>vote</button>
       <button onClick={selectAnecdote}>next anecdote</button>
+      <h1>Anecdote with most votes</h1>
+      {allPoints.every((el) => el === 0)
+        ? "No votes yet"
+        : anecdotes[allPoints.indexOf(Math.max(...allPoints))]}
     </>
   );
 };
