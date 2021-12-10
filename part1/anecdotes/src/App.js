@@ -1,5 +1,36 @@
 import { useState } from "react";
 
+const Title = ({text}) => {
+  return <h1>{text}</h1>;
+};
+
+const Button = ({ action, text }) => {
+  return <button onClick={action}>{text}</button>;
+};
+
+const Anecdote = ({ anecdotes, points, selected }) => {
+  return (
+    <>
+      <div>{anecdotes[selected]}</div>
+      <div>has {points} votes</div>
+    </>
+  );
+};
+
+const BestAnecdote = ({ allPoints, anecdotes }) => {
+  const max = Math.max(...allPoints);
+  if (allPoints.every((el) => el === 0)) {
+    return <div>No votes yet</div>;
+  } else {
+    return (
+      <>
+        <div>{anecdotes[allPoints.indexOf(max)]}</div>
+        <div>has {max} votes</div>
+      </>
+    );
+  }
+};
+
 const App = () => {
   const anecdotes = [
     "If it hurts, do it more often",
@@ -12,32 +43,31 @@ const App = () => {
   ];
 
   const [selected, setSelected] = useState(0);
+  const [points, setPoints] = useState(0);
   const [allPoints, setAllPoints] = useState(
     new Array(anecdotes.length).fill(0)
   );
   const selectAnecdote = () => {
     const pickRandom = Math.floor(Math.random() * anecdotes.length);
+    setPoints(allPoints[pickRandom]);
     setSelected(pickRandom);
   };
 
   const increment = () => {
     const copy = [...allPoints];
     copy[selected] += 1;
+    setPoints(copy[selected]);
     setAllPoints(copy);
-    console.log(copy);
   };
 
   return (
     <>
-      <h1>Anecdote of the day</h1>
-      <div>{anecdotes[selected]}</div>
-      <div>has {allPoints[selected]} votes</div>
-      <button onClick={increment}>vote</button>
-      <button onClick={selectAnecdote}>next anecdote</button>
-      <h1>Anecdote with most votes</h1>
-      {allPoints.every((el) => el === 0)
-        ? "No votes yet"
-        : anecdotes[allPoints.indexOf(Math.max(...allPoints))]}
+      <Title text="Anecdote of the day" />
+      <Anecdote points={points} anecdotes={anecdotes} selected={selected} />
+      <Button action={increment} text="vote" />
+      <Button action={selectAnecdote} text="next anecdote" />
+      <Title text="Anecdote with most votes" />
+      <BestAnecdote allPoints={allPoints} anecdotes={anecdotes} />
     </>
   );
 };
