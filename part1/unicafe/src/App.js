@@ -8,6 +8,7 @@ const Result = ({ text, total }) => {
   return (
     <div>
       {text} {total}
+      {text === "positive" ? "%" : ""}
     </div>
   );
 };
@@ -18,8 +19,13 @@ function App() {
   const [bad, setBad] = useState(0);
 
   const update = (setter, current) => {
-    return () => setter(current + 1);
+    return () => {
+      setter(current + 1);
+    };
   };
+  let all = good + neutral + bad;
+  let nonZeroSum = all === 0 ? 1 : all;
+  let positive = good / nonZeroSum;
 
   return (
     <div>
@@ -31,6 +37,12 @@ function App() {
       <Result text={"good"} total={good} />
       <Result text={"neutral"} total={neutral} />
       <Result text={"bad"} total={bad} />
+      <Result text={"all"} total={all} />
+      <Result
+        text={"all"}
+        total={(good * 1 + neutral * 0 + bad * -1) / nonZeroSum}
+      />
+      <Result text={"positive"} total={positive} />
     </div>
   );
 }
