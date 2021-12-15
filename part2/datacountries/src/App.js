@@ -6,21 +6,29 @@ export default function App() {
   const [searchValue, setSearchValue] = useState("");
   const [countries, setCountries] = useState([]);
   const [filteredCountries, setFilteredCountries] = useState([]);
+  const [displayCountry, setDisplayCountry] = useState({});
 
   const hook = () => {
     axios.get("https://restcountries.com/v3.1/all").then((response) => {
       setCountries(response.data);
-      console.log("retrieved data once on load thanks to useEffect and []")
+      console.log("retrieved data once on load thanks to useEffect and []");
     });
   };
 
   useEffect(hook, []);
 
+  const showCountry = (cca3) => {
+    return () => {
+      const country = countries.filter((country) => country.cca3 === cca3)[0];
+      setDisplayCountry(country);
+    };
+  };
+
   const Country = ({ country }) => {
     return (
       <>
         <h1>{country.name.common}</h1>
-        <div>capital {country.capital[0]}</div>
+        <div>capital {country.capital?.[0]}</div>
         <h2>Languages</h2>
         <ul>
           {Object.entries(country.languages).map(([langcode, language]) => {
@@ -37,9 +45,14 @@ export default function App() {
       return <div>No query matches</div>;
     } else if (countries.length <= 10) {
       return countries.map((country) => {
-        return <div key={country.cca3}>{country.name.common}</div>; //key can't be a number apparently, I couldn't set ccn3 as key
+        return (
+          <div key={country.cca3}>
+            <span>{country.name.common}</span>
+            <button onClick={showCountry(country.cca3)}>show</button>
+          </div>
+        ); //key can't be a number apparently, I couldn't set ccn3 as key
       });
-    } else if (countries.length > 10) {
+    } else {
       return <div>Too many matches, specify another filter</div>;
     }
   };
@@ -47,6 +60,7 @@ export default function App() {
   const handleSearch = (event) => {
     const searchedCountry = event.target.value;
     setSearchValue(searchedCountry);
+    setDisplayCountry({});
     if (searchedCountry) {
       const lookupText = new RegExp(searchedCountry, "i");
       setFilteredCountries(
@@ -68,6 +82,11 @@ export default function App() {
         <Country country={filteredCountries[0]} />
       ) : (
         <Countries countries={filteredCountries} />
+      )}
+      {Object.keys(displayCountry).length !== 0 ? (
+        <Country country={displayCountry} />
+      ) : (
+        ""
       )}
     </div>
   );
