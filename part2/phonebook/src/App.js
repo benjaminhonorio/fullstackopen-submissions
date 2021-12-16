@@ -2,11 +2,10 @@ import React, { useState, useEffect } from "react";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
-import axios from "axios";
+import personServices from "./services/person";
 
 const App = () => {
-
-  const [persons, setPersons] = useState([]);
+  const [filteredPeople, setFilteredPeople] = useState([]);
   const [allPeople, setAllPeople] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
@@ -14,19 +13,25 @@ const App = () => {
 
   const hook = () => {
     console.log("effect");
-    axios.get("http://localhost:3001/persons").then((response) => {
+    personServices.getAll().then((initialPeople) => {
       console.log("promise fulfilled");
-      setAllPeople(response.data);
-      setPersons(response.data);
+      setAllPeople(initialPeople);
+      setFilteredPeople(initialPeople);
     });
   };
   useEffect(hook, []);
 
   const addNewPerson = (event) => {
     event.preventDefault();
+    const newPerson = {
+      name: newName,
+      number: newNumber,
+    };
     if (allPeople.filter((person) => person.name === newName).length === 0) {
-      setPersons(persons.concat({ name: newName, number: newNumber }));
-      setAllPeople(allPeople.concat({ name: newName, number: newNumber }));
+      personServices.create(newPerson).then((returnedPerson) => {
+        setFilteredPeople(filteredPeople.concat(newPerson));
+        setAllPeople(allPeople.concat(newPerson));
+      });
     } else {
       alert(`${newName} is already added to phonebook`);
     }
@@ -46,10 +51,12 @@ const App = () => {
     const searchInput = event.target.value;
     setSearchValue(searchInput);
     let lookupText = new RegExp(searchInput, "i");
-    let filteredPeople = allPeople.filter((person) =>
+    let justFilteredPeople = allPeople.filter((person) =>
       lookupText.test(person.name)
     );
-    filteredPeople.length !== 0 ? setPersons(filteredPeople) : setPersons([]);
+    filteredPeople.length !== 0
+      ? setFilteredPeople(justFilteredPeople)
+      : setFilteredPeople([]);
   };
 
   return (
@@ -65,7 +72,7 @@ const App = () => {
         newNumber={newNumber}
       />
       <h3>Numbers</h3>
-      <Persons persons={persons} />
+      <Persons persons={filteredPeople} />
     </div>
   );
 };
