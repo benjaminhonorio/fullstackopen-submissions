@@ -1,8 +1,10 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-export default function App() {
+import Countries from "./components/Countries";
+import DisplayCountry from "./components/DisplayCountry";
+
+const App = () => {
   const [searchValue, setSearchValue] = useState("");
   const [countries, setCountries] = useState([]);
   const [filteredCountries, setFilteredCountries] = useState([]);
@@ -11,7 +13,6 @@ export default function App() {
   const hook = () => {
     axios.get("https://restcountries.com/v3.1/all").then((response) => {
       setCountries(response.data);
-      console.log("retrieved data once on load thanks to useEffect and []");
     });
   };
 
@@ -22,39 +23,6 @@ export default function App() {
       const country = countries.filter((country) => country.cca3 === cca3)[0];
       setDisplayCountry(country);
     };
-  };
-
-  const Country = ({ country }) => {
-    return (
-      <>
-        <h1>{country.name.common}</h1>
-        <div>capital {country.capital?.[0]}</div>
-        <h2>Languages</h2>
-        <ul>
-          {Object.entries(country.languages).map(([langcode, language]) => {
-            return <li key={langcode}>{language}</li>;
-          })}
-        </ul>
-        <img src={country.flags.png} alt={country.flag} />
-      </>
-    );
-  };
-
-  const Countries = ({ countries }) => {
-    if (countries.length === 0 && searchValue.length) {
-      return <div>No query matches</div>;
-    } else if (countries.length <= 10) {
-      return countries.map((country) => {
-        return (
-          <div key={country.cca3}>
-            <span>{country.name.common}</span>
-            <button onClick={showCountry(country.cca3)}>show</button>
-          </div>
-        ); //key can't be a number apparently, I couldn't set ccn3 as key
-      });
-    } else {
-      return <div>Too many matches, specify another filter</div>;
-    }
   };
 
   const handleSearch = (event) => {
@@ -78,16 +46,14 @@ export default function App() {
       <div>
         find countries <input onChange={handleSearch} value={searchValue} />
       </div>
-      {filteredCountries.length === 1 ? (
-        <Country country={filteredCountries[0]} />
-      ) : (
-        <Countries countries={filteredCountries} />
-      )}
-      {Object.keys(displayCountry).length !== 0 ? (
-        <Country country={displayCountry} />
-      ) : (
-        ""
-      )}
+      <Countries
+        countries={filteredCountries}
+        searchValue={searchValue}
+        showCountry={showCountry}
+      />
+      <DisplayCountry country={displayCountry} />
     </div>
   );
-}
+};
+
+export default App;
