@@ -1,10 +1,14 @@
-const Persons = ({ persons }) => {
+import Person from "./Person";
+
+const Persons = ({ persons, handleDelete }) => {
   return persons.length !== 0 ? (
     persons.map((person) => {
       return (
-        <div key={person.name}>
-          {person.name} {person.number}
-        </div>
+        <Person
+          key={person.id}
+          person={person}
+          deletePerson={() => handleDelete(person.id)}
+        />
       );
     })
   ) : (

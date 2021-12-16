@@ -29,14 +29,26 @@ const App = () => {
     };
     if (allPeople.filter((person) => person.name === newName).length === 0) {
       personServices.create(newPerson).then((returnedPerson) => {
-        setFilteredPeople(filteredPeople.concat(newPerson));
-        setAllPeople(allPeople.concat(newPerson));
+        setFilteredPeople(filteredPeople.concat(returnedPerson));
+        setAllPeople(allPeople.concat(returnedPerson));
       });
     } else {
       alert(`${newName} is already added to phonebook`);
     }
     setNewName("");
     setNewNumber("");
+  };
+
+  const handleDelete = (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this person?"
+    );
+    if (confirmDelete) {
+      personServices.deletePerson(id);
+      setFilteredPeople(allPeople.filter((person) => person.id !== id));
+      setAllPeople(allPeople.filter((person) => person.id !== id));
+      setSearchValue("");
+    }
   };
 
   const handleName = (event) => {
@@ -72,7 +84,7 @@ const App = () => {
         newNumber={newNumber}
       />
       <h3>Numbers</h3>
-      <Persons persons={filteredPeople} />
+      <Persons persons={filteredPeople} handleDelete={handleDelete} />
     </div>
   );
 };
