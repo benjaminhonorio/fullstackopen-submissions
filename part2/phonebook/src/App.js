@@ -27,13 +27,30 @@ const App = () => {
       name: newName,
       number: newNumber,
     };
-    if (allPeople.filter((person) => person.name === newName).length === 0) {
+    const filteredPerson = allPeople.filter(
+      (person) => person.name === newName
+    );
+    if (filteredPerson.length === 0) {
       personServices.create(newPerson).then((returnedPerson) => {
         setFilteredPeople(filteredPeople.concat(returnedPerson));
         setAllPeople(allPeople.concat(returnedPerson));
       });
     } else {
-      alert(`${newName} is already added to phonebook`);
+      const confirmUpdate = window.confirm(
+        `${newName} is already added to phonebook, replace the old number with the new one?`
+      );
+      if (confirmUpdate) {
+        const changedPerson = { ...filteredPerson[0], number: newNumber };
+        personServices
+          .update(filteredPerson[0].id, changedPerson)
+          .then((returnedPerson) => {
+            const updatedPeople = allPeople.map((person) =>
+              person.id !== filteredPerson[0].id ? person : returnedPerson
+            );
+            setAllPeople(updatedPeople);
+            setFilteredPeople(updatedPeople);
+          });
+      }
     }
     setNewName("");
     setNewNumber("");
