@@ -62,13 +62,17 @@ const App = () => {
   const handleSearch = (event) => {
     const searchInput = event.target.value;
     setSearchValue(searchInput);
-    let lookupText = new RegExp(searchInput, "i");
-    let justFilteredPeople = allPeople.filter((person) =>
-      lookupText.test(person.name)
-    );
-    filteredPeople.length !== 0
-      ? setFilteredPeople(justFilteredPeople)
-      : setFilteredPeople([]);
+    if (searchInput) {
+      let lookupText = new RegExp(searchInput, "i");
+      let justFilteredPeople = allPeople.filter((person) =>
+        lookupText.test(person.name)
+      );
+      filteredPeople.length !== 0
+        ? setFilteredPeople(justFilteredPeople)
+        : setFilteredPeople([]);
+    } else {
+      setFilteredPeople(allPeople);
+    }
   };
 
   return (
