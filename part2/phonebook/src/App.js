@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import Notification from "./components/Notification";
 import personServices from "./services/person";
 
 const App = () => {
@@ -10,6 +11,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchValue, setSearchValue] = useState("");
+  const [message, setMessage] = useState(null);
 
   const hook = () => {
     console.log("effect");
@@ -34,6 +36,13 @@ const App = () => {
       personServices.create(newPerson).then((returnedPerson) => {
         setFilteredPeople(filteredPeople.concat(returnedPerson));
         setAllPeople(allPeople.concat(returnedPerson));
+        setMessage({
+          type: "success",
+          content: `Added ${returnedPerson.name}`,
+        });
+        setTimeout(() => {
+          setMessage(null);
+        }, 4000);
       });
     } else {
       const confirmUpdate = window.confirm(
@@ -49,6 +58,13 @@ const App = () => {
             );
             setAllPeople(updatedPeople);
             setFilteredPeople(updatedPeople);
+            setMessage({
+              type: "success",
+              content: `The number of ${returnedPerson.name} was updated successfully`,
+            });
+            setTimeout(() => {
+              setMessage(null);
+            }, 4000);
           });
       }
     }
@@ -95,6 +111,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} />
       <Filter handleSearch={handleSearch} searchValue={searchValue} />
       <h3>add a new</h3>
       <PersonForm
