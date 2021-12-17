@@ -14,9 +14,7 @@ const App = () => {
   const [message, setMessage] = useState(null);
 
   const hook = () => {
-    console.log("effect");
     personServices.getAll().then((initialPeople) => {
-      console.log("promise fulfilled");
       setAllPeople(initialPeople);
       setFilteredPeople(initialPeople);
     });
@@ -65,6 +63,15 @@ const App = () => {
             setTimeout(() => {
               setMessage(null);
             }, 4000);
+          })
+          .catch((error) => {
+            setMessage({
+              type: "error",
+              content: `Information of ${newName} has already been removed from server`,
+            });
+            setTimeout(() => {
+              setMessage(null);
+            }, 4000);
           });
       }
     }
@@ -72,12 +79,20 @@ const App = () => {
     setNewNumber("");
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = (id, person) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this person?"
     );
     if (confirmDelete) {
-      personServices.deletePerson(id);
+      personServices.deletePerson(id).catch((error) => {
+        setMessage({
+          type: "error",
+          content: `Information of ${person} has already been removed from server`,
+        });
+        setTimeout(() => {
+          setMessage(null);
+        }, 4000);
+      });
       setFilteredPeople(allPeople.filter((person) => person.id !== id));
       setAllPeople(allPeople.filter((person) => person.id !== id));
       setSearchValue("");

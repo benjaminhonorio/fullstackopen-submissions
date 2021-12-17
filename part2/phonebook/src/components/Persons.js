@@ -7,7 +7,7 @@ const Persons = ({ persons, handleDelete }) => {
         <Person
           key={person.id}
           person={person}
-          deletePerson={() => handleDelete(person.id)}
+          deletePerson={() => handleDelete(person.id, person.name)}
         />
       );
     })
