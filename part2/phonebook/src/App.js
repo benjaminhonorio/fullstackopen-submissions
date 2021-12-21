@@ -31,17 +31,28 @@ const App = () => {
       (person) => person.name === newName
     );
     if (filteredPerson.length === 0) {
-      personServices.create(newPerson).then((returnedPerson) => {
-        setFilteredPeople(filteredPeople.concat(returnedPerson));
-        setAllPeople(allPeople.concat(returnedPerson));
-        setMessage({
-          type: "success",
-          content: `Added ${returnedPerson.name}`,
+      personServices
+        .create(newPerson)
+        .then((returnedPerson) => {
+          setFilteredPeople(filteredPeople.concat(returnedPerson));
+          setAllPeople(allPeople.concat(returnedPerson));
+          setMessage({
+            type: "success",
+            content: `Added ${returnedPerson.name}`,
+          });
+          setTimeout(() => {
+            setMessage(null);
+          }, 4000);
+        })
+        .catch((error) => {
+          setMessage({
+            type: "error",
+            content: JSON.stringify(error.response.data.error),
+          });
+          setTimeout(() => {
+            setMessage(null);
+          }, 4000);
         });
-        setTimeout(() => {
-          setMessage(null);
-        }, 4000);
-      });
     } else {
       const confirmUpdate = window.confirm(
         `${newName} is already added to phonebook, replace the old number with the new one?`
