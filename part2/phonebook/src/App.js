@@ -78,7 +78,7 @@ const App = () => {
           .catch((error) => {
             setMessage({
               type: "error",
-              content: `Information of ${newName} has already been removed from server`,
+              content: JSON.stringify(error.response.data.error),
             });
             setTimeout(() => {
               setMessage(null);
